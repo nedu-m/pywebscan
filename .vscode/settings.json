@@ -1,0 +1,13 @@
+{
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "python.formatting.provider": "none",
+  "cSpell.words": [
+    "csvfile",
+    "customsearch",
+    "dotenv",
+    "googleapiclient",
+    "KHTML"
+  ]
+}
