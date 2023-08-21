@@ -52,7 +52,7 @@ def scrape_jobs(query):
                     ):
                         # Add "https://" to relative URL
                         if job_url.startswith("/"):
-                            job_url = "https://" + job_url[2:]
+                            job_url = "https://" + job_url[1:]
 
                         job_positions.append({"job_title": job_title, "url": job_url})
                 time.sleep(2)
