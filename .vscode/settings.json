@@ -8,6 +8,8 @@
     "customsearch",
     "dotenv",
     "googleapiclient",
-    "KHTML"
+    "KHTML",
+    "metatags",
+    "pagemap"
   ]
 }

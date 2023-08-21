@@ -4,8 +4,10 @@ import os
 import re
 import time
 import csv
+from datetime import datetime, timedelta
 import requests
 from dotenv import load_dotenv
+
 from googleapiclient.discovery import build
 from bs4 import BeautifulSoup
 
@@ -27,6 +29,19 @@ def scrape_jobs(query):
 
     for result in search_results:
         url = result.get("link")
+        published_date_str = (
+            result.get("pagemap", {}).get("metatags", [{}])[0].get("pubdate")
+        )
+
+        if published_date_str:
+            try:
+                published_date = datetime.strptime(
+                    published_date_str, "%Y-%m-%dT%H:%M:%SZ"
+                )
+                if datetime.now() - published_date > timedelta(weeks=3):
+                    continue
+            except ValueError:
+                pass
 
         try:
             # Use requests to get the HTML content of the page
@@ -54,7 +69,13 @@ def scrape_jobs(query):
                         if job_url.startswith("/"):
                             job_url = "https://" + job_url[1:]
 
-                        job_positions.append({"job_title": job_title, "url": job_url})
+                        job_positions.append(
+                            {
+                                "job_title": job_title,
+                                "job_url": job_url,
+                                "website_url": url,  # Store the website URL
+                            }
+                        )
                 time.sleep(2)
 
         except requests.exceptions.RequestException as e:  # pylint: disable=C0103
@@ -86,13 +107,17 @@ def get_user_input():
 
 def write_to_csv(job_positions, csv_filename):
     with open(csv_filename, "w", newline="", encoding="utf-8") as csvfile:
-        fieldnames = ["Job Title", "URL"]
+        fieldnames = ["Job Title", "Job URL", "Website URL"]
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
         writer.writeheader()
         for position in job_positions:
             writer.writerow(
-                {"Job Title": position["job_title"], "URL": position["url"]}
+                {
+                    "Job Title": position["job_title"],
+                    "Job URL": position["job_url"],
+                    "Website URL": position["website_url"],
+                }
             )
 
 
