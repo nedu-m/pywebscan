@@ -10,6 +10,7 @@
     "googleapiclient",
     "KHTML",
     "metatags",
-    "pagemap"
+    "pagemap",
+    "webscan"
   ]
 }
